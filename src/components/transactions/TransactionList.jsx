@@ -9,7 +9,7 @@ export const TransactionList = () => {
   const allCategories = [...expenseCategories, ...incomeCategories];
 
   return (
-    <Card className="flex flex-col h-full rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <Card className="flex flex-col h-full rounded-3xl border border-slate-200 bg-white shadow-sm p-1 lg:p-6">
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
         <h3 className="font-semibold text-lg text-slate-800">Movimientos</h3>
       </div>
@@ -19,7 +19,7 @@ export const TransactionList = () => {
       </div>
 
       {transactions.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center text-slate-400">
+        <div className="flex flex-col items-center h-full justify-center py-16 text-center text-slate-400">
           <div className="text-3xl mb-2">📊</div>
           <p className="text-sm">Aún no tienes movimientos registrados</p>
         </div>

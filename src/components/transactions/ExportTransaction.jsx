@@ -42,6 +42,7 @@ export const ExportTransactions = ({ transactions }) => {
         </button>
 
         <button
+          type="button"
           onClick={() => {
             const monthly = getMonthlyTransactions(transactions);
 
@@ -58,22 +59,33 @@ export const ExportTransactions = ({ transactions }) => {
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2">
-        <input
-          type="date"
-          value={start}
-          onChange={(e) => setStart(e.target.value)}
-          className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
-        />
+      <div className="flex flex-col sm:flex-row gap-2 items-end">
+        <div className="w-full flex flex-col">
+          <label className="text-xs font-medium text-slate-600 mb-1">
+            Fecha inicio
+          </label>
+          <input
+            type="date"
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
+            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
 
-        <input
-          type="date"
-          value={end}
-          onChange={(e) => setEnd(e.target.value)}
-          className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
-        />
+        <div className="w-full flex flex-col">
+          <label className="text-xs font-medium text-slate-600 mb-1">
+            Fecha final
+          </label>
+          <input
+            type="date"
+            value={end}
+            onChange={(e) => setEnd(e.target.value)}
+            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
 
         <button
+          type="button"
           onClick={() => {
             if (!start || !end) {
               alert("Selecciona un rango de fechas");
@@ -91,12 +103,14 @@ export const ExportTransactions = ({ transactions }) => {
 
             exportTransactionsToExcel(data, "reporte-personalizado", label);
           }}
-          className="w-full bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"
+          className="w-full bg-indigo-500 text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"
         >
           Exportar rango
         </button>
+
         {(start || end) && (
           <button
+            type="button"
             onClick={clearRange}
             className="w-full bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-300 transition"
           >

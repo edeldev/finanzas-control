@@ -5,11 +5,11 @@ import { expenseCategories, incomeCategories } from "../../data/categories";
 export const AddTransaction = () => {
   const { addTransaction } = useFinance();
 
-  const [type, setType] = useState("expense");
+  const [type, setType] = useState("income");
   const [text, setText] = useState("");
   const [amount, setAmount] = useState("");
 
-  const [category, setCategory] = useState(expenseCategories[0].id);
+  const [category, setCategory] = useState(incomeCategories[0].id);
 
   const categories = type === "income" ? incomeCategories : expenseCategories;
   const numericAmount = Number(amount);
@@ -32,14 +32,14 @@ export const AddTransaction = () => {
 
     setText("");
     setAmount("");
-    setType("expense");
+    setType("income");
     setCategory(incomeCategories[0].id);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4"
+      className="bg-white rounded-3xl p-4 lg:p-6 border border-slate-200 shadow-sm space-y-4"
     >
       <h3 className="text-lg font-semibold text-slate-800">Nuevo movimiento</h3>
 

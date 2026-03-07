@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+input,
+select,
+button {
+  font-family: inherit;
+}
+
+/* Fix select Safari */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Quitar flechas number input Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Fix date input Safari */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  color: #000;
+  background-color: #fff;
+  min-height: 44px;
+  width: 100%;
+}
+
+/* Hace visible el texto de la fecha en Safari */
+input[type="date"]::-webkit-datetime-edit {
+  color: #000;
+}
+
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
