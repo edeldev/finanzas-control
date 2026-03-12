@@ -22,6 +22,7 @@ export const ExportTransactions = ({ transactions }) => {
     <div className="flex flex-col gap-3 mb-4">
       <div className="flex flex-col sm:flex-row gap-2">
         <button
+          type="button"
           onClick={() => {
             const weekly = getWeeklyTransactions(transactions);
 
@@ -36,7 +37,7 @@ export const ExportTransactions = ({ transactions }) => {
               "Últimos 7 días",
             );
           }}
-          className="w-full bg-slate-900 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-slate-800 transition"
+          className="w-full bg-slate-900 cursor-pointer text-white py-2.5 rounded-xl text-sm font-medium hover:bg-slate-800 transition"
         >
           Exportar semana
         </button>
@@ -53,7 +54,7 @@ export const ExportTransactions = ({ transactions }) => {
 
             exportTransactionsToExcel(monthly, "reporte-mes", "Este mes");
           }}
-          className="w-full bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-600 transition"
+          className="w-full bg-emerald-500 cursor-pointer text-white py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-600 transition"
         >
           Exportar mes
         </button>
@@ -103,7 +104,7 @@ export const ExportTransactions = ({ transactions }) => {
 
             exportTransactionsToExcel(data, "reporte-personalizado", label);
           }}
-          className="w-full bg-indigo-500 text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"
+          className="w-full bg-indigo-500 cursor-pointer text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"
         >
           Exportar rango
         </button>

@@ -38,6 +38,12 @@ export const FinanceProvider = ({ children }) => {
     ]);
   };
 
+  const editTransaction = (id, updatedTransaction) => {
+    setTransactions((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updatedTransaction } : t)),
+    );
+  };
+
   const deleteTransaction = (id) => {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   };
@@ -49,6 +55,7 @@ export const FinanceProvider = ({ children }) => {
         budget,
         setBudget,
         addTransaction,
+        editTransaction,
         deleteTransaction,
       }}
     >
