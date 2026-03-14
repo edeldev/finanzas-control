@@ -3,6 +3,7 @@ import { useFinance } from "../../context/FinanceContext";
 import { expenseCategories, incomeCategories } from "../../data/categories";
 import { Card } from "../ui/Card";
 import { ExportTransactions } from "./ExportTransaction";
+import { formatMoney } from "../../utils/formatters";
 
 export const TransactionList = () => {
   const {
@@ -91,11 +92,6 @@ export const TransactionList = () => {
   const renderTransaction = ({ parent, children }) => {
     const category = allCategories.find((c) => c.id === parent.category);
 
-    const formattedAmount = Number(parent.amount).toLocaleString("es-MX", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
     const formattedDate = new Date(parent.date).toLocaleString("es-MX", {
       day: "numeric",
       month: "short",
@@ -149,7 +145,8 @@ export const TransactionList = () => {
                   parent.type === "income" ? "text-emerald-500" : "text-red-500"
                 }`}
               >
-                {parent.type === "income" ? "+" : "-"}${formattedAmount}
+                {parent.type === "income" ? "+" : "-"}
+                {formatMoney(parent.amount)}
               </span>
             )}
 
@@ -206,7 +203,7 @@ export const TransactionList = () => {
             </span>
 
             <span className="text-red-500 font-medium">
-              -${Number(child.amount).toLocaleString("es-MX")}
+              -{formatMoney(child.amount)}
             </span>
           </div>
         ))}

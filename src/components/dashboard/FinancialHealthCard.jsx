@@ -1,5 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
+import { formatMoney } from "../../utils/formatters";
 import { ProgressBar } from "../ui/ProgressBar";
 import { FinanceChart } from "./FinanceChart";
 
@@ -38,7 +39,7 @@ export const FinancialHealthCard = () => {
             </span>
 
             <span className="font-medium">
-              ${investment.toFixed(2)} / ${recommendedInvestment.toFixed(2)}
+              {formatMoney(investment)} / {formatMoney(recommendedInvestment)}
             </span>
           </div>
 
@@ -50,7 +51,7 @@ export const FinancialHealthCard = () => {
             <span className="text-blue-600">💰 Ahorro recomendado (20%)</span>
 
             <span className="font-medium">
-              ${savings.toFixed(2)} / ${recommendedSavings.toFixed(2)}
+              {formatMoney(savings)} / {formatMoney(recommendedSavings)}
             </span>
           </div>
 
@@ -61,14 +62,14 @@ export const FinancialHealthCard = () => {
           <div className="flex justify-between text-sm mb-1">
             <span className="text-red-500">💸 Presupuesto de gastos (30%)</span>
             <span className="font-medium">
-              ${expenses.toFixed(2)} / ${allowedExpenses.toFixed(2)}
+              {formatMoney(expenses)} / {formatMoney(allowedExpenses)}
             </span>
           </div>
 
           <ProgressBar value={hasIncome ? expenseProgress : 0} type="expense" />
 
           <div className="text-xs text-slate-400 mt-1">
-            Disponible para gastar: ${remainingExpenses.toFixed(2)}
+            Disponible para gastar: {formatMoney(remainingExpenses)}
           </div>
         </div>
       </div>
