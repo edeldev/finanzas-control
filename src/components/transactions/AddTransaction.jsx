@@ -1,33 +1,46 @@
 import { useState } from "react";
 import { useFinance } from "../../context/FinanceContext";
 import { expenseCategories, incomeCategories } from "../../data/categories";
+import { calculateFinanceSummary } from "../../utils/calculations";
 
 export const AddTransaction = () => {
-  const { addTransaction } = useFinance();
+  const { addTransaction, transactions } = useFinance();
 
   const [type, setType] = useState("income");
   const [text, setText] = useState("");
   const [amount, setAmount] = useState("");
-
   const [category, setCategory] = useState(incomeCategories[0].id);
 
   const categories = type === "income" ? incomeCategories : expenseCategories;
+
   const numericAmount = Number(amount);
 
-  const validate = !text.trim() || !amount || Number(amount) <= 0;
+  const validate = !text.trim() || !amount || numericAmount <= 0;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validate) return;
 
+    const { savings, investment } = calculateFinanceSummary(transactions);
+
+    if (type === "expense") {
+      if (category === "savingsExpense" && numericAmount > savings) {
+        alert("No tienes suficiente ahorro");
+        return;
+      }
+
+      if (category === "investmentExpense" && numericAmount > investment) {
+        alert("No tienes suficiente inversión");
+        return;
+      }
+    }
+
     addTransaction({
-      id: Date.now(),
       text: text.trim(),
       amount: Math.abs(numericAmount),
       category,
       type,
-      date: new Date().toISOString(),
     });
 
     setText("");
@@ -44,7 +57,7 @@ export const AddTransaction = () => {
       <h3 className="text-lg font-semibold text-slate-800">Nuevo movimiento</h3>
 
       <input
-        className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full border border-slate-200 rounded-xl px-4 py-3"
         placeholder="Descripción"
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -52,15 +65,17 @@ export const AddTransaction = () => {
 
       <input
         type="number"
+        min="0"
         step="0.01"
-        className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        inputMode="decimal"
+        className="w-full border border-slate-200 rounded-xl px-4 py-3"
         placeholder="Cantidad"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
 
       <select
-        className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full border border-slate-200 rounded-xl px-4 py-3 cursor-pointer"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
       >
@@ -78,10 +93,10 @@ export const AddTransaction = () => {
             setType("income");
             setCategory(incomeCategories[0].id);
           }}
-          className={`flex-1 py-2 rounded-xl border cursor-pointer transition ${
+          className={`flex-1 py-2 cursor-pointer rounded-xl border ${
             type === "income"
-              ? "bg-emerald-500 text-white border-emerald-500"
-              : "border-neutral-200 hover:bg-neutral-50"
+              ? "bg-emerald-500 text-white"
+              : "border-neutral-200"
           }`}
         >
           Ingreso
@@ -93,10 +108,8 @@ export const AddTransaction = () => {
             setType("expense");
             setCategory(expenseCategories[0].id);
           }}
-          className={`flex-1 py-2 rounded-xl border cursor-pointer transition ${
-            type === "expense"
-              ? "bg-red-500 text-white border-red-500"
-              : "border-neutral-200 hover:bg-neutral-50"
+          className={`flex-1 py-2 cursor-pointer rounded-xl border ${
+            type === "expense" ? "bg-red-500 text-white" : "border-neutral-200"
           }`}
         >
           Gasto
@@ -106,7 +119,7 @@ export const AddTransaction = () => {
       <button
         type="submit"
         disabled={validate}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-400 transition text-white py-3 rounded-xl font-medium"
+        className="w-full bg-indigo-600 cursor-pointer hover:bg-indigo-700 disabled:bg-slate-400 text-white py-3 rounded-xl"
       >
         Guardar
       </button>
