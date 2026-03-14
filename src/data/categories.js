@@ -11,6 +11,8 @@ export const expenseCategories = [
   { id: "entertainment", name: "Entretenimiento", icon: "🎮" },
   { id: "education", name: "Educación", icon: "📚" },
   { id: "other", name: "Otros", icon: "📦" },
+  { id: "investmentExpense", name: "Gasto inversión", icon: "📈" },
+  { id: "savingsExpense", name: "Gasto ahorro", icon: "💰" },
 ];
 
 export const incomeCategories = [
@@ -18,6 +20,7 @@ export const incomeCategories = [
   { id: "salary", name: "Salario", icon: "💰" },
   { id: "freelance", name: "Freelance", icon: "💻" },
   { id: "gift", name: "Regalo", icon: "🎁" },
-  { id: "investment", name: "Inversión", icon: "📈" },
+  { id: "investmentIncome", name: "Inversión", icon: "📈" },
   { id: "support", name: "Apoyo", icon: "🤝" },
+  { id: "savingsIncome", name: "Ahorro", icon: "💰" },
 ];

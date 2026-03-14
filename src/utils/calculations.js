@@ -1,17 +1,93 @@
-export const calculateBalance = (transactions) => {
-  return transactions.reduce((acc, t) => {
-    return t.type === "income" ? acc + t.amount : acc - t.amount;
-  }, 0);
-};
+export const calculateFinanceSummary = (transactions = []) => {
+  let income = 0;
+  let incomeForRule = 0;
 
-export const calculateIncome = (transactions) => {
-  return transactions
-    .filter((t) => t.type === "income")
-    .reduce((acc, t) => acc + t.amount, 0);
-};
+  let expenses = 0;
 
-export const calculateExpenses = (transactions) => {
-  return transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, t) => acc + t.amount, 0);
+  let savings = 0;
+  let investment = 0;
+
+  let savingsWithdrawals = 0;
+  let investmentWithdrawals = 0;
+
+  transactions.forEach((t) => {
+    const amount = Number(t.amount) || 0;
+
+    if (t.type === "income") {
+      income += amount;
+
+      if (t.category === "savingsIncome") {
+        savings += amount;
+        return;
+      }
+
+      if (t.category === "investmentIncome") {
+        investment += amount;
+        return;
+      }
+
+      incomeForRule += amount;
+      return;
+    }
+
+    if (t.type === "expense") {
+      if (t.category === "savingsExpense") {
+        if (t.automatic) {
+          savings += amount;
+        } else {
+          savings -= amount;
+          savingsWithdrawals += amount;
+        }
+        return;
+      }
+
+      if (t.category === "investmentExpense") {
+        if (t.automatic) {
+          investment += amount;
+        } else {
+          investment -= amount;
+          investmentWithdrawals += amount;
+        }
+        return;
+      }
+
+      expenses += amount;
+    }
+  });
+
+  const recommendedSavings = incomeForRule * 0.2;
+  const recommendedInvestment = incomeForRule * 0.5;
+  const allowedExpenses = incomeForRule * 0.3;
+
+  const remainingExpenses = allowedExpenses - expenses;
+
+  const expenseProgress =
+    allowedExpenses > 0 ? (expenses / allowedExpenses) * 100 : 0;
+
+  const savingsProgress =
+    recommendedSavings > 0 ? (savings / recommendedSavings) * 100 : 0;
+
+  const investmentProgress =
+    recommendedInvestment > 0 ? (investment / recommendedInvestment) * 100 : 0;
+
+  return {
+    income,
+    expenses,
+
+    savings,
+    investment,
+
+    savingsWithdrawals,
+    investmentWithdrawals,
+
+    allowedExpenses,
+    remainingExpenses,
+
+    recommendedSavings,
+    recommendedInvestment,
+
+    expenseProgress,
+    savingsProgress,
+    investmentProgress,
+  };
 };

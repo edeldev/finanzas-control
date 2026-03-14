@@ -1,31 +1,59 @@
 import { useFinance } from "../../context/FinanceContext";
-import { calculateBalance } from "../../utils/calculations";
+import { calculateFinanceSummary } from "../../utils/calculations";
 
 export const BalanceCard = () => {
   const { transactions } = useFinance();
-  const balance = calculateBalance(transactions);
+
+  const { investment, savings, remainingExpenses } =
+    calculateFinanceSummary(transactions);
+
+  const totalBalance =
+    (investment ?? 0) + (savings ?? 0) + (remainingExpenses ?? 0);
 
   return (
-    <div className="relative overflow-hidden rounded-[28px] p-6 text-white shadow-xl bg-linear-to-br from-indigo-500 via-blue-500 to-indigo-700">
-      <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+    <div className="rounded-[30px] p-8 text-white shadow-xl bg-linear-to-br from-indigo-500 via-blue-500 to-indigo-700">
+      <div className="flex flex-col gap-7">
+        <div>
+          <p className="text-sm opacity-70 tracking-wide">Balance total</p>
 
-      <div className="relative flex flex-col gap-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-sm opacity-80">Balance disponible</p>
-
-            <h2 className="text-3xl sm:text-4xl font-bold mt-1 tracking-tight">
-              ${balance.toFixed(2)}
-            </h2>
-          </div>
-
-          <div className="bg-white/20 px-3 py-1 rounded-full text-xs">
-            Cuenta
-          </div>
+          <h2 className="text-5xl font-bold mt-1 tracking-tight">
+            ${(totalBalance ?? 0).toFixed(2)}
+          </h2>
         </div>
 
-        <p className="text-xs opacity-70">Actualizado automáticamente</p>
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4">
+          <p className="text-xs uppercase opacity-70">
+            Disponible del presupuesto de gastos
+          </p>
+
+          <p className="text-2xl font-semibold mt-1">
+            ${(remainingExpenses ?? 0).toFixed(2)}
+          </p>
+        </div>
+
+        <div className="h-px bg-white/20" />
+
+        <div className="grid grid-cols-2 gap-6">
+          <div className="flex flex-col bg-white/10 rounded-2xl p-4">
+            <span className="text-xs opacity-70 flex items-center gap-1">
+              📈 Inversión
+            </span>
+
+            <span className="text-xl font-semibold mt-1">
+              ${(investment ?? 0).toFixed(2)}
+            </span>
+          </div>
+
+          <div className="flex flex-col bg-white/10 rounded-2xl p-4">
+            <span className="text-xs opacity-70 flex items-center gap-1">
+              💰 Ahorro
+            </span>
+
+            <span className="text-xl font-semibold mt-1">
+              ${(savings ?? 0).toFixed(2)}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

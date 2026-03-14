@@ -3,6 +3,7 @@ import { BalanceCard } from "./components/dashboard/BalanceCard";
 import { SummaryCards } from "./components/dashboard/SummaryCards";
 import { AddTransaction } from "./components/transactions/AddTransaction";
 import { TransactionList } from "./components/transactions/TransactionList";
+import { FinancialHealthCard } from "./components/dashboard/FinancialHealthCard";
 
 function App() {
   return (
@@ -23,12 +24,13 @@ function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="space-y-6 lg:sticky top-5 h-fit">
-              <BalanceCard />
               <SummaryCards />
-              <AddTransaction />
+              <BalanceCard />
+              <FinancialHealthCard />
             </div>
 
-            <div className="lg:col-span-2 h-full">
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              <AddTransaction />
               <TransactionList />
             </div>
           </div>
