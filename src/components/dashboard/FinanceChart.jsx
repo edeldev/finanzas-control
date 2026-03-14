@@ -1,5 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
+import { formatMoney } from "../../utils/formatters";
 
 export const FinanceChart = () => {
   const { transactions } = useFinance();
@@ -33,7 +34,7 @@ export const FinanceChart = () => {
           <span className="text-xs text-slate-400">Disponible</span>
 
           <span className="text-lg font-semibold text-slate-800">
-            ${remainingExpenses.toFixed(0)}
+            {formatMoney(remainingExpenses)}
           </span>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
+import { formatMoney } from "../../utils/formatters";
 
 export const BalanceCard = () => {
   const { transactions } = useFinance();
@@ -17,7 +18,7 @@ export const BalanceCard = () => {
           <p className="text-sm opacity-70 tracking-wide">Balance total</p>
 
           <h2 className="text-5xl font-bold mt-1 tracking-tight">
-            ${(totalBalance ?? 0).toFixed(2)}
+            {formatMoney(totalBalance)}
           </h2>
         </div>
 
@@ -27,7 +28,7 @@ export const BalanceCard = () => {
           </p>
 
           <p className="text-2xl font-semibold mt-1">
-            ${(remainingExpenses ?? 0).toFixed(2)}
+            {formatMoney(remainingExpenses)}
           </p>
         </div>
 
@@ -40,7 +41,7 @@ export const BalanceCard = () => {
             </span>
 
             <span className="text-xl font-semibold mt-1">
-              ${(investment ?? 0).toFixed(2)}
+              {formatMoney(investment)}
             </span>
           </div>
 
@@ -50,7 +51,7 @@ export const BalanceCard = () => {
             </span>
 
             <span className="text-xl font-semibold mt-1">
-              ${(savings ?? 0).toFixed(2)}
+              {formatMoney(savings)}
             </span>
           </div>
         </div>

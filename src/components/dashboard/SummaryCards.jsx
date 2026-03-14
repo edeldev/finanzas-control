@@ -1,5 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
+import { formatMoney } from "../../utils/formatters";
 
 export const SummaryCards = () => {
   const { transactions } = useFinance();
@@ -13,7 +14,7 @@ export const SummaryCards = () => {
         <p className="text-xs text-slate-500">Ingresos totales</p>
 
         <h3 className="text-2xl font-bold text-emerald-500 mt-1">
-          ${(income ?? 0).toFixed(2)}
+          {formatMoney(income)}
         </h3>
       </div>
 
@@ -21,7 +22,7 @@ export const SummaryCards = () => {
         <p className="text-xs text-slate-500">Gastos de presupuesto</p>
 
         <h3 className="text-2xl font-bold text-red-500 mt-1">
-          ${(expenses ?? 0).toFixed(2)}
+          {formatMoney(expenses)}
         </h3>
       </div>
 
@@ -29,7 +30,7 @@ export const SummaryCards = () => {
         <p className="text-xs text-slate-500">Retiro de ahorro</p>
 
         <h3 className="text-2xl font-bold text-orange-500 mt-1">
-          ${(savingsWithdrawals ?? 0).toFixed(2)}
+          {formatMoney(savingsWithdrawals)}
         </h3>
       </div>
 
@@ -37,7 +38,7 @@ export const SummaryCards = () => {
         <p className="text-xs text-slate-500">Retiro de inversión</p>
 
         <h3 className="text-2xl font-bold text-purple-500 mt-1">
-          ${(investmentWithdrawals ?? 0).toFixed(2)}
+          {formatMoney(investmentWithdrawals)}
         </h3>
       </div>
     </div>
