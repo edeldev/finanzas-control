@@ -21,8 +21,6 @@ export const FinancialHealthCard = () => {
     recommendedInvestment,
   } = calculateFinanceSummary(transactions);
 
-  const hasIncome = income > 0;
-
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6">
       <h3 className="text-lg font-semibold text-slate-800">
@@ -43,7 +41,7 @@ export const FinancialHealthCard = () => {
             </span>
           </div>
 
-          <ProgressBar value={hasIncome ? investmentProgress : 0} type="goal" />
+          <ProgressBar value={investmentProgress} type="goal" />
         </div>
 
         <div>
@@ -55,7 +53,7 @@ export const FinancialHealthCard = () => {
             </span>
           </div>
 
-          <ProgressBar value={hasIncome ? savingsProgress : 0} type="goal" />
+          <ProgressBar value={savingsProgress} type="goal" />
         </div>
 
         <div>
@@ -66,7 +64,7 @@ export const FinancialHealthCard = () => {
             </span>
           </div>
 
-          <ProgressBar value={hasIncome ? expenseProgress : 0} type="expense" />
+          <ProgressBar value={expenseProgress} type="expense" />
 
           <div className="text-xs text-slate-400 mt-1">
             Disponible para gastar: {formatMoney(remainingExpenses)}
