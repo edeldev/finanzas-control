@@ -5,6 +5,7 @@ import {
   getTransactionsByRange,
   getWeeklyTransactions,
 } from "../../utils/transactionFilters";
+import toast from "react-hot-toast";
 
 export const ExportTransactions = ({ transactions }) => {
   const [start, setStart] = useState("");
@@ -27,7 +28,7 @@ export const ExportTransactions = ({ transactions }) => {
             const weekly = getWeeklyTransactions(transactions);
 
             if (weekly.length === 0) {
-              alert("No hay movimientos esta semana");
+              toast("ℹ️ No hay movimientos esta semana");
               return;
             }
 
@@ -48,7 +49,7 @@ export const ExportTransactions = ({ transactions }) => {
             const monthly = getMonthlyTransactions(transactions);
 
             if (monthly.length === 0) {
-              alert("No hay movimientos este mes");
+              toast("ℹ️ No hay movimientos este mes");
               return;
             }
 
@@ -89,20 +90,21 @@ export const ExportTransactions = ({ transactions }) => {
           type="button"
           onClick={() => {
             if (!start || !end) {
-              alert("Selecciona un rango de fechas");
+              toast("ℹ️ Selecciona un rango de fechas");
               return;
             }
 
             const data = getTransactionsByRange(transactions, start, end);
 
             if (data.length === 0) {
-              alert("No hay movimientos en ese rango");
+              toast("ℹ️ No hay movimientos en ese rango");
               return;
             }
 
             const label = `Rango: ${formatDate(start)} - ${formatDate(end)}`;
 
             exportTransactionsToExcel(data, "reporte-personalizado", label);
+            clearRange();
           }}
           className="w-full bg-indigo-500 cursor-pointer text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"
         >

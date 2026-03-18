@@ -4,12 +4,14 @@ import { expenseCategories, incomeCategories } from "../../data/categories";
 import { Card } from "../ui/Card";
 import { ExportTransactions } from "./ExportTransaction";
 import { formatMoney } from "../../utils/formatters";
+import toast from "react-hot-toast";
 
 export const TransactionList = () => {
   const {
     transactions = [],
     deleteTransaction,
     editTransaction,
+    addTransaction,
   } = useFinance();
 
   const [editingId, setEditingId] = useState(null);
@@ -21,7 +23,7 @@ export const TransactionList = () => {
   const startEdit = (t) => {
     setEditingId(t.id);
     setEditText(t.text);
-    setEditAmount(t.amount);
+    setEditAmount(String(t.amount));
   };
 
   const saveEdit = (id) => {
@@ -29,8 +31,30 @@ export const TransactionList = () => {
       text: editText,
       amount: Math.abs(Number(editAmount)),
     });
+    toast.success("Movimiento actualizado ✏️");
 
     setEditingId(null);
+  };
+
+  const handleDeleteTransaction = (parentId) => {
+    const target = transactions.find((t) => t.id === parentId);
+
+    deleteTransaction(parentId);
+
+    toast((t) => (
+      <div className="flex items-center gap-3">
+        <span>Movimiento eliminado</span>
+        <button
+          className="text-blue-400 cursor-pointer"
+          onClick={() => {
+            addTransaction(target);
+            toast.dismiss(t.id);
+          }}
+        >
+          Deshacer
+        </button>
+      </div>
+    ));
   };
 
   const groupedTransactions = [];
@@ -100,6 +124,25 @@ export const TransactionList = () => {
       minute: "2-digit",
     });
 
+    const formatInput = (value) => {
+      if (!value) return "";
+
+      if (value.endsWith(".")) return value;
+
+      const parts = value.split(".");
+
+      const decimals = parts[1]?.slice(0, 2) || "";
+      const integer = parts[0];
+
+      const formattedInteger = Number(integer).toLocaleString("en-US");
+
+      if (value.includes(".")) {
+        return `${formattedInteger}.${decimals}`;
+      }
+
+      return formattedInteger;
+    };
+
     return (
       <div key={parent.id} className="space-y-2">
         <div className="flex justify-between items-center p-4 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 hover:shadow-sm transition">
@@ -133,12 +176,39 @@ export const TransactionList = () => {
 
           <div className="flex items-center gap-4">
             {editingId === parent.id ? (
-              <input
-                type="number"
-                value={editAmount}
-                onChange={(e) => setEditAmount(e.target.value)}
-                className="border border-slate-200 rounded-lg px-2 py-1 text-sm w-24 text-right"
-              />
+              <div className="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1 w-28">
+                <span
+                  className={`text-sm font-semibold ${
+                    parent.type === "income"
+                      ? "text-emerald-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  $
+                </span>
+
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formatInput(editAmount)}
+                  onChange={(e) => {
+                    let raw = e.target.value.replace(/,/g, "");
+                    raw = raw.replace(/[^0-9.]/g, "");
+
+                    const parts = raw.split(".");
+                    if (parts.length > 2) {
+                      raw = parts[0] + "." + parts[1];
+                    }
+
+                    if (parts[1]?.length > 2) {
+                      raw = parts[0] + "." + parts[1].slice(0, 2);
+                    }
+
+                    setEditAmount(raw);
+                  }}
+                  className="flex-1 outline-none text-sm font-semibold"
+                />
+              </div>
             ) : (
               <span
                 className={`font-semibold text-lg ${
@@ -176,7 +246,7 @@ export const TransactionList = () => {
                   </button>
 
                   <button
-                    onClick={() => deleteTransaction(parent.id)}
+                    onClick={() => handleDeleteTransaction(parent.id)}
                     className="text-slate-400 hover:text-red-500 cursor-pointer"
                   >
                     🗑

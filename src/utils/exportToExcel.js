@@ -10,7 +10,7 @@ export const exportTransactionsToExcel = (
   const allCategories = [...expenseCategories, ...incomeCategories];
 
   const sorted = [...transactions].sort(
-    (a, b) => new Date(a.date) - new Date(b.date),
+    (a, b) => new Date(b.date) - new Date(a.date),
   );
 
   let totalIncome = 0;
