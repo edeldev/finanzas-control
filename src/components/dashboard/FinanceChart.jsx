@@ -9,10 +9,10 @@ export const FinanceChart = () => {
     calculateFinanceSummary(transactions);
 
   const total = allowedExpenses || 1;
-
   const safeExpenses = Math.min(expenses, allowedExpenses);
-
   const expensesAngle = (safeExpenses / total) * 360;
+
+  const isExceeded = expenses > allowedExpenses;
 
   return (
     <div className="flex flex-col items-center py-6 gap-4">
@@ -24,16 +24,22 @@ export const FinanceChart = () => {
               allowedExpenses === 0
                 ? "#e5e7eb"
                 : `conic-gradient(
-            #ef4444 0deg ${expensesAngle}deg,
+            ${isExceeded ? "#dc2626" : "#ef4444"} 0deg ${expensesAngle}deg,
             #22c55e ${expensesAngle}deg 360deg
           )`,
           }}
         />
 
         <div className="absolute w-28 h-28 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-          <span className="text-xs text-slate-400">Disponible</span>
+          <span className="text-xs text-slate-400">
+            {isExceeded ? "Exceso" : "Disponible"}
+          </span>
 
-          <span className="text-lg font-semibold text-slate-800">
+          <span
+            className={`text-lg font-semibold ${
+              isExceeded ? "text-red-500" : "text-slate-800"
+            }`}
+          >
             {formatMoney(remainingExpenses)}
           </span>
         </div>
@@ -50,6 +56,12 @@ export const FinanceChart = () => {
           Disponible
         </div>
       </div>
+
+      {isExceeded && (
+        <div className="text-xs text-red-500 text-center">
+          ⚠️ Has superado tu presupuesto
+        </div>
+      )}
     </div>
   );
 };
