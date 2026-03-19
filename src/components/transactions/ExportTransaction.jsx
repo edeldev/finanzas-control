@@ -6,8 +6,10 @@ import {
   getWeeklyTransactions,
 } from "../../utils/transactionFilters";
 import toast from "react-hot-toast";
+import { useFinance } from "../../context/FinanceContext";
 
-export const ExportTransactions = ({ transactions }) => {
+export const ExportTransactions = () => {
+  const { transactions, rule } = useFinance();
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 
@@ -36,6 +38,7 @@ export const ExportTransactions = ({ transactions }) => {
               weekly,
               "reporte-semana",
               "Últimos 7 días",
+              rule,
             );
           }}
           className="w-full bg-slate-900 cursor-pointer text-white py-2.5 rounded-xl text-sm font-medium hover:bg-slate-800 transition"
@@ -53,7 +56,7 @@ export const ExportTransactions = ({ transactions }) => {
               return;
             }
 
-            exportTransactionsToExcel(monthly, "reporte-mes", "Este mes");
+            exportTransactionsToExcel(monthly, "reporte-mes", "Este mes", rule);
           }}
           className="w-full bg-emerald-500 cursor-pointer text-white py-2.5 rounded-xl text-sm font-medium hover:bg-emerald-600 transition"
         >
@@ -103,7 +106,12 @@ export const ExportTransactions = ({ transactions }) => {
 
             const label = `Rango: ${formatDate(start)} - ${formatDate(end)}`;
 
-            exportTransactionsToExcel(data, "reporte-personalizado", label);
+            exportTransactionsToExcel(
+              data,
+              "reporte-personalizado",
+              label,
+              rule,
+            );
             clearRange();
           }}
           className="w-full bg-indigo-500 cursor-pointer text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-600 transition"

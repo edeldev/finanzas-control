@@ -165,9 +165,7 @@ export const TransactionList = () => {
                   className="border border-slate-200 rounded-lg px-2 py-1 text-sm"
                 />
               ) : (
-                <p className="font-medium text-slate-800 truncate">
-                  {parent.text}
-                </p>
+                <p className="font-medium text-slate-800">{parent.text}</p>
               )}
 
               <div className="flex flex-col text-xs leading-tight mt-1">
@@ -177,12 +175,60 @@ export const TransactionList = () => {
 
                 <span className="text-slate-400">{formattedDate}</span>
               </div>
+              <div className="mt-2">
+                {editingId === parent.id ? (
+                  <div className="flex md:hidden items-center gap-1 border border-slate-200 rounded-lg px-2 py-1 w-28">
+                    <span
+                      className={`text-sm font-semibold ${
+                        parent.type === "income"
+                          ? "text-emerald-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      $
+                    </span>
+
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={formatInput(editAmount)}
+                      onChange={(e) => {
+                        let raw = e.target.value.replace(/,/g, "");
+                        raw = raw.replace(/[^0-9.]/g, "");
+
+                        const parts = raw.split(".");
+                        if (parts.length > 2) {
+                          raw = parts[0] + "." + parts[1];
+                        }
+
+                        if (parts[1]?.length > 2) {
+                          raw = parts[0] + "." + parts[1].slice(0, 2);
+                        }
+
+                        setEditAmount(raw);
+                      }}
+                      className="flex-1 outline-none text-sm font-semibold"
+                    />
+                  </div>
+                ) : (
+                  <span
+                    className={`block md:hidden font-semibold text-lg ${
+                      parent.type === "income"
+                        ? "text-emerald-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {parent.type === "income" ? "+" : "-"}
+                    {formatMoney(parent.amount)}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4">
             {editingId === parent.id ? (
-              <div className="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1 w-28">
+              <div className="hidden md:flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1 w-28">
                 <span
                   className={`text-sm font-semibold ${
                     parent.type === "income"
@@ -217,7 +263,7 @@ export const TransactionList = () => {
               </div>
             ) : (
               <span
-                className={`font-semibold text-lg ${
+                className={`hidden md:block font-semibold text-lg ${
                   parent.type === "income" ? "text-emerald-500" : "text-red-500"
                 }`}
               >
@@ -226,7 +272,7 @@ export const TransactionList = () => {
               </span>
             )}
 
-            <div className="flex gap-2 transition">
+            <div className="flex gap-2 transition w-full justify-end">
               {editingId === parent.id ? (
                 <>
                   <button
@@ -310,7 +356,7 @@ export const TransactionList = () => {
       </div>
 
       <div className="px-6 pt-4">
-        <ExportTransactions transactions={transactions} />
+        <ExportTransactions />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4 space-y-8">
