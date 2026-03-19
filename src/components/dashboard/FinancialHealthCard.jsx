@@ -135,7 +135,7 @@ export const FinancialHealthCard = () => {
 
           {expenseProgress > 100 && (
             <div className="text-xs text-red-500 mt-1">
-              🚨 Estás gastando más del 30% recomendado
+              🚨 Estás gastando más del {rule.expenses}% recomendado
             </div>
           )}
         </div>
