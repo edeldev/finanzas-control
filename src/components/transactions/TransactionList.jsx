@@ -27,10 +27,16 @@ export const TransactionList = () => {
   };
 
   const saveEdit = (id) => {
-    editTransaction(id, {
+    const result = editTransaction(id, {
       text: editText,
       amount: Math.abs(Number(editAmount)),
     });
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
     toast.success("Movimiento actualizado ✏️");
 
     setEditingId(null);

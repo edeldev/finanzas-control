@@ -23,43 +23,64 @@ export const RulePopover = () => {
       <button
         onClick={() => setOpen(!open)}
         className="
+          flex items-center gap-2
           px-4 py-2 rounded-full text-sm font-medium
-          bg-slate-900 text-white
-          hover:bg-slate-800
+          bg-linear-to-r from-slate-900 to-slate-700 text-white
+          hover:from-slate-800 hover:to-slate-600
+          shadow-md hover:shadow-lg
           transition-all duration-200 cursor-pointer
         "
       >
-        ⚙️ Regla: {rule.investment}% inv • {rule.savings}% ahorro •{" "}
-        {rule.expenses}% gastos
+        <span className="text-base">⚙️</span>
+
+        <span className="hidden sm:inline">
+          {rule.investment}% inversión • {rule.savings}% ahorro •{" "}
+          {rule.expenses}% gastos
+        </span>
+
+        <span className="sm:hidden">Regla</span>
       </button>
 
       {open && (
         <div
           className="
-            absolute right-0 mt-3 w-80
-            bg-white/90 backdrop-blur-xl
-            border border-slate-200
-            rounded-2xl shadow-lg
-            p-4 z-50
-            animate-in fade-in zoom-in-95
+            absolute mt-3 w-80
+            bg-white/80 backdrop-blur-2xl
+            border border-white/40
+            rounded-3xl shadow-2xl
+            p-5 z-50
+            animate-in fade-in zoom-in-95 duration-200
           "
         >
-          <div className="flex items-start gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 text-lg">
               ⚙️
             </div>
 
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-slate-800">
-                Cambiar regla
+                Regla financiera
               </p>
               <p className="text-xs text-slate-500">
-                Aplica solo a ingresos futuros
+                Se aplica automáticamente a tus ingresos
               </p>
             </div>
+
+            <button
+              onClick={() => setOpen(false)}
+              className="text-slate-400 hover:text-slate-700 transition cursor-pointer"
+            >
+              ✕
+            </button>
           </div>
 
-          <RuleSelector />
+          <div className="h-px bg-slate-200 mb-4" />
+
+          <RuleSelector setOpen={setOpen} />
+
+          <div className="mt-4 text-[11px] text-slate-400 text-center">
+            💡 Tip: Ajusta tu regla según tus metas financieras
+          </div>
         </div>
       )}
     </div>

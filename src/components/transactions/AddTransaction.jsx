@@ -23,7 +23,10 @@ export const AddTransaction = () => {
 
     if (validate) return;
 
-    const { savings, investment } = calculateFinanceSummary(transactions, rule);
+    const { savings, investment, remainingExpenses } = calculateFinanceSummary(
+      transactions,
+      rule,
+    );
 
     if (type === "expense") {
       if (category === "savingsExpense" && numericAmount > savings) {
@@ -33,6 +36,15 @@ export const AddTransaction = () => {
 
       if (category === "investmentExpense" && numericAmount > investment) {
         toast.error("No tienes suficiente inversión 📉");
+        return;
+      }
+
+      if (
+        category !== "savingsExpense" &&
+        category !== "investmentExpense" &&
+        numericAmount > remainingExpenses
+      ) {
+        toast.error("Te estás pasando de tu presupuesto 🧾");
         return;
       }
     }

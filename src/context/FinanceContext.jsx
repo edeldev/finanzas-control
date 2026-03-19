@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { getExpenseBalance } from "../utils/expenseBalance";
 
 const FinanceContext = createContext();
 
@@ -24,9 +25,7 @@ export const FinanceProvider = ({ children }) => {
 
     if (userConfig) {
       const parsed = JSON.parse(userConfig);
-      if (parsed.rule) {
-        setRule(parsed.rule);
-      }
+      if (parsed.rule) setRule(parsed.rule);
     }
 
     setIsLoaded(true);
@@ -35,13 +34,7 @@ export const FinanceProvider = ({ children }) => {
   useEffect(() => {
     if (!isLoaded) return;
 
-    localStorage.setItem(
-      "finance",
-      JSON.stringify({
-        transactions,
-        budget,
-      }),
-    );
+    localStorage.setItem("finance", JSON.stringify({ transactions, budget }));
   }, [transactions, budget, isLoaded]);
 
   useEffect(() => {
@@ -49,14 +42,69 @@ export const FinanceProvider = ({ children }) => {
 
     const userConfig = JSON.parse(localStorage.getItem("userConfig")) || {};
 
-    localStorage.setItem(
-      "userConfig",
-      JSON.stringify({
-        ...userConfig,
-        rule,
-      }),
-    );
+    localStorage.setItem("userConfig", JSON.stringify({ ...userConfig, rule }));
   }, [rule, isLoaded]);
+
+  const getBalance = (list, type) => {
+    return list.reduce((acc, t) => {
+      if (t.category === `${type}Expense`) {
+        return t.automatic ? acc + t.amount : acc - t.amount;
+      }
+      if (t.category === `${type}Income`) {
+        return acc + t.amount;
+      }
+      return acc;
+    }, 0);
+  };
+
+  const changeRule = (newRule) => {
+    setTransactions((prev) => {
+      const groups = {};
+
+      prev.forEach((t) => {
+        if (!t.groupId) return;
+        if (!groups[t.groupId]) groups[t.groupId] = [];
+        groups[t.groupId].push(t);
+      });
+
+      const baseByGroup = {};
+
+      Object.keys(groups).forEach((groupId) => {
+        const incomeTx = groups[groupId].find(
+          (t) => t.type === "income" && !t.automatic,
+        );
+
+        if (incomeTx) {
+          baseByGroup[groupId] = Number(incomeTx.amount) || 0;
+        }
+      });
+
+      return prev.map((t) => {
+        if (!t.groupId) return t;
+
+        const baseAmount = baseByGroup[t.groupId];
+        if (baseAmount === undefined) return t;
+
+        if (t.category === "savingsExpense" && t.automatic) {
+          return {
+            ...t,
+            amount: baseAmount * (newRule.savings / 100),
+          };
+        }
+
+        if (t.category === "investmentExpense" && t.automatic) {
+          return {
+            ...t,
+            amount: baseAmount * (newRule.investment / 100),
+          };
+        }
+
+        return t;
+      });
+    });
+
+    setRule(newRule);
+  };
 
   const addTransaction = (transaction) => {
     const internalIncomeCategories = new Set([
@@ -77,76 +125,36 @@ export const FinanceProvider = ({ children }) => {
 
       const groupId = crypto.randomUUID();
 
-      const incomeTransaction = {
-        ...transaction,
-        id: crypto.randomUUID(),
-        groupId,
-        date: now,
-      };
-
-      const savingsTransaction = {
-        id: crypto.randomUUID(),
-        groupId,
-        text: `Ahorro`,
-        amount: savingsAmount,
-        type: "expense",
-        category: "savingsExpense",
-        automatic: true,
-        date: now,
-      };
-
-      const investmentTransaction = {
-        id: crypto.randomUUID(),
-        groupId,
-        text: `Inversión`,
-        amount: investmentAmount,
-        type: "expense",
-        category: "investmentExpense",
-        automatic: true,
-        date: now,
-      };
-
-      setTransactions((prev) => [
-        ...prev,
-        incomeTransaction,
-        savingsTransaction,
-        investmentTransaction,
-      ]);
-
-      return;
-    }
-
-    if (
-      transaction.type === "income" &&
-      transaction.category === "savingsIncome"
-    ) {
       setTransactions((prev) => [
         ...prev,
         {
           ...transaction,
           id: crypto.randomUUID(),
-          type: "income",
-          category: "savingsIncome",
+          groupId,
           date: now,
         },
-      ]);
-      return;
-    }
-
-    if (
-      transaction.type === "income" &&
-      transaction.category === "investmentIncome"
-    ) {
-      setTransactions((prev) => [
-        ...prev,
         {
-          ...transaction,
           id: crypto.randomUUID(),
-          type: "income",
-          category: "investmentIncome",
+          groupId,
+          text: "Ahorro",
+          amount: savingsAmount,
+          type: "expense",
+          category: "savingsExpense",
+          automatic: true,
+          date: now,
+        },
+        {
+          id: crypto.randomUUID(),
+          groupId,
+          text: "Inversión",
+          amount: investmentAmount,
+          type: "expense",
+          category: "investmentExpense",
+          automatic: true,
           date: now,
         },
       ]);
+
       return;
     }
 
@@ -155,25 +163,59 @@ export const FinanceProvider = ({ children }) => {
       {
         ...transaction,
         id: crypto.randomUUID(),
-        date: transaction.date || now,
+        date: now,
       },
     ]);
   };
 
   const editTransaction = (id, updatedTransaction) => {
+    const target = transactions.find((t) => t.id === id);
+    if (!target) return { success: false };
+
+    const newAmount = Number(updatedTransaction.amount) || 0;
+
+    if (target.category === "savingsExpense" && !target.automatic) {
+      const filtered = transactions.filter((t) => t.id !== id);
+      const available = getBalance(filtered, "savings");
+
+      if (newAmount > available) {
+        return { success: false, error: "No tienes suficiente ahorro" };
+      }
+    }
+
+    if (target.category === "investmentExpense" && !target.automatic) {
+      const filtered = transactions.filter((t) => t.id !== id);
+      const available = getBalance(filtered, "investment");
+
+      if (newAmount > available) {
+        return { success: false, error: "No tienes suficiente inversión" };
+      }
+    }
+
+    if (
+      target.type === "expense" &&
+      target.category !== "savingsExpense" &&
+      target.category !== "investmentExpense"
+    ) {
+      const filtered = transactions.filter((t) => t.id !== id);
+      const balance = getExpenseBalance(filtered);
+
+      if (newAmount > balance) {
+        return {
+          success: false,
+          error: "No tienes suficiente presupuesto",
+        };
+      }
+    }
+
     setTransactions((prev) => {
-      const target = prev.find((t) => t.id === id);
-
-      if (!target) return prev;
-
       if (!target.groupId || target.automatic) {
         return prev.map((t) =>
           t.id === id ? { ...t, ...updatedTransaction } : t,
         );
       }
 
-      const amount = Number(updatedTransaction.amount) || 0;
-
+      const amount = newAmount;
       const savingsAmount = amount * (rule.savings / 100);
       const investmentAmount = amount * (rule.investment / 100);
 
@@ -181,13 +223,10 @@ export const FinanceProvider = ({ children }) => {
         if (t.groupId !== target.groupId) return t;
 
         if (t.id === id) {
-          return {
-            ...t,
-            ...updatedTransaction,
-          };
+          return { ...t, ...updatedTransaction };
         }
 
-        if (t.category === "savingsExpense") {
+        if (t.category === "savingsExpense" && t.automatic) {
           return {
             ...t,
             amount: savingsAmount,
@@ -195,7 +234,7 @@ export const FinanceProvider = ({ children }) => {
           };
         }
 
-        if (t.category === "investmentExpense") {
+        if (t.category === "investmentExpense" && t.automatic) {
           return {
             ...t,
             amount: investmentAmount,
@@ -206,12 +245,13 @@ export const FinanceProvider = ({ children }) => {
         return t;
       });
     });
+
+    return { success: true };
   };
 
   const deleteTransaction = (id) => {
     setTransactions((prev) => {
       const target = prev.find((t) => t.id === id);
-
       if (!target) return prev;
 
       if (!target.groupId) {
@@ -242,7 +282,7 @@ export const FinanceProvider = ({ children }) => {
         editTransaction,
         deleteTransaction,
         rule,
-        setRule,
+        changeRule,
         resetAllData,
       }}
     >
