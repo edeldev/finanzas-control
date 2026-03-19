@@ -1,4 +1,4 @@
-export const calculateFinanceSummary = (transactions = []) => {
+export const calculateFinanceSummary = (transactions = [], rule) => {
   let income = 0;
   let incomeForRule = 0;
 
@@ -55,9 +55,9 @@ export const calculateFinanceSummary = (transactions = []) => {
     }
   });
 
-  const recommendedSavings = incomeForRule * 0.2;
-  const recommendedInvestment = incomeForRule * 0.5;
-  const allowedExpenses = incomeForRule * 0.3;
+  const recommendedSavings = incomeForRule * (rule.savings / 100);
+  const recommendedInvestment = incomeForRule * (rule.investment / 100);
+  const allowedExpenses = incomeForRule * (rule.expenses / 100);
 
   const remainingExpenses = allowedExpenses - expenses;
 

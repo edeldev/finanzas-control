@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(to bottom, #f8fafc, #eef2ff);
+}
+
 input,
 select,
 button {

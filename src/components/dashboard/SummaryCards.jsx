@@ -3,10 +3,10 @@ import { calculateFinanceSummary } from "../../utils/calculations";
 import { formatMoney } from "../../utils/formatters";
 
 export const SummaryCards = () => {
-  const { transactions } = useFinance();
+  const { transactions, rule } = useFinance();
 
   const { income, expenses, savingsWithdrawals, investmentWithdrawals } =
-    calculateFinanceSummary(transactions);
+    calculateFinanceSummary(transactions, rule);
 
   return (
     <div className="grid grid-cols-2 gap-4">
