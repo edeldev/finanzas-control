@@ -3,10 +3,10 @@ import { calculateFinanceSummary } from "../../utils/calculations";
 import { formatMoney } from "../../utils/formatters";
 
 export const FinanceChart = () => {
-  const { transactions } = useFinance();
+  const { transactions, rule } = useFinance();
 
   const { expenses, allowedExpenses, remainingExpenses } =
-    calculateFinanceSummary(transactions);
+    calculateFinanceSummary(transactions, rule);
 
   const total = allowedExpenses || 1;
   const safeExpenses = Math.min(expenses, allowedExpenses);

@@ -5,7 +5,7 @@ import { calculateFinanceSummary } from "../../utils/calculations";
 import toast from "react-hot-toast";
 
 export const AddTransaction = () => {
-  const { addTransaction, transactions } = useFinance();
+  const { addTransaction, transactions, rule } = useFinance();
 
   const [type, setType] = useState("income");
   const [text, setText] = useState("");
@@ -23,7 +23,7 @@ export const AddTransaction = () => {
 
     if (validate) return;
 
-    const { savings, investment } = calculateFinanceSummary(transactions);
+    const { savings, investment } = calculateFinanceSummary(transactions, rule);
 
     if (type === "expense") {
       if (category === "savingsExpense" && numericAmount > savings) {
@@ -75,8 +75,9 @@ export const AddTransaction = () => {
 
   return (
     <form
+      id="transaction"
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl p-4 lg:p-6 border border-slate-200 shadow-sm space-y-4"
+      className="bg-white rounded-3xl p-4 lg:p-6 border border-slate-200 shadow-sm space-y-4 scroll-m-20"
     >
       <h3 className="text-lg font-semibold text-slate-800">Nuevo movimiento</h3>
 
@@ -111,6 +112,7 @@ export const AddTransaction = () => {
       </div>
 
       <input
+        autoFocus={``}
         className="w-full border border-slate-200 rounded-xl px-4 py-3"
         placeholder="Descripción"
         value={text}

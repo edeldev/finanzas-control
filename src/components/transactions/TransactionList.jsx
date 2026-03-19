@@ -295,6 +295,8 @@ export const TransactionList = () => {
     );
   };
 
+  const isEmpty = transactions.length === 0;
+
   return (
     <Card className="flex flex-col flex-1 rounded-3xl border border-slate-200 bg-slate-50 shadow-sm">
       <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-white rounded-t-3xl">
@@ -306,10 +308,31 @@ export const TransactionList = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4 space-y-8">
-        {renderSection("Hoy", sections.hoy)}
-        {renderSection("Ayer", sections.ayer)}
-        {renderSection("Esta semana", sections.semana)}
-        {renderSection("Pasados", sections.antiguo)}
+        {isEmpty ? (
+          <div className="flex flex-col items-center justify-center text-center py-20 space-y-4">
+            <div className="text-6xl animate-bounce">💸</div>
+            <h4 className="text-xl font-semibold text-slate-700">
+              ¡Nada por aquí!
+            </h4>
+            <p className="text-slate-500 max-w-xs">
+              Parece que aún no has registrado ningún movimiento. ¡Empieza a
+              controlar tu dinero y verás tu progreso crecer!
+            </p>
+            <a
+              href="#transaction"
+              className="mt-4 px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition shadow-lg"
+            >
+              Agregar primer movimiento
+            </a>
+          </div>
+        ) : (
+          <>
+            {renderSection("Hoy", sections.hoy)}
+            {renderSection("Ayer", sections.ayer)}
+            {renderSection("Esta semana", sections.semana)}
+            {renderSection("Pasados", sections.antiguo)}
+          </>
+        )}
       </div>
     </Card>
   );

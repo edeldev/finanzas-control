@@ -6,14 +6,27 @@ export const FinanceProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
   const [budget, setBudget] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [rule, setRule] = useState({
+    investment: 50,
+    expenses: 30,
+    savings: 20,
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("finance");
+    const userConfig = localStorage.getItem("userConfig");
 
     if (saved) {
       const data = JSON.parse(saved);
       setTransactions(data.transactions || []);
       setBudget(data.budget || 0);
+    }
+
+    if (userConfig) {
+      const parsed = JSON.parse(userConfig);
+      if (parsed.rule) {
+        setRule(parsed.rule);
+      }
     }
 
     setIsLoaded(true);
@@ -31,6 +44,20 @@ export const FinanceProvider = ({ children }) => {
     );
   }, [transactions, budget, isLoaded]);
 
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const userConfig = JSON.parse(localStorage.getItem("userConfig")) || {};
+
+    localStorage.setItem(
+      "userConfig",
+      JSON.stringify({
+        ...userConfig,
+        rule,
+      }),
+    );
+  }, [rule, isLoaded]);
+
   const addTransaction = (transaction) => {
     const internalIncomeCategories = new Set([
       "investmentIncome",
@@ -45,8 +72,8 @@ export const FinanceProvider = ({ children }) => {
     ) {
       const amount = Number(transaction.amount);
 
-      const savingsAmount = amount * 0.2;
-      const investmentAmount = amount * 0.5;
+      const savingsAmount = amount * (rule.savings / 100);
+      const investmentAmount = amount * (rule.investment / 100);
 
       const groupId = crypto.randomUUID();
 
@@ -147,8 +174,8 @@ export const FinanceProvider = ({ children }) => {
 
       const amount = Number(updatedTransaction.amount) || 0;
 
-      const savingsAmount = amount * 0.2;
-      const investmentAmount = amount * 0.5;
+      const savingsAmount = amount * (rule.savings / 100);
+      const investmentAmount = amount * (rule.investment / 100);
 
       return prev.map((t) => {
         if (t.groupId !== target.groupId) return t;
@@ -195,6 +222,16 @@ export const FinanceProvider = ({ children }) => {
     });
   };
 
+  const resetAllData = () => {
+    setTransactions([]);
+    setBudget(0);
+
+    localStorage.removeItem("finance");
+    localStorage.removeItem("userConfig");
+
+    window.location.reload();
+  };
+
   return (
     <FinanceContext.Provider
       value={{
@@ -204,6 +241,9 @@ export const FinanceProvider = ({ children }) => {
         addTransaction,
         editTransaction,
         deleteTransaction,
+        rule,
+        setRule,
+        resetAllData,
       }}
     >
       {children}

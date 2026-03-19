@@ -5,7 +5,7 @@ import { ProgressBar } from "../ui/ProgressBar";
 import { FinanceChart } from "./FinanceChart";
 
 export const FinancialHealthCard = () => {
-  const { transactions } = useFinance();
+  const { transactions, rule } = useFinance();
 
   const {
     income,
@@ -19,7 +19,7 @@ export const FinancialHealthCard = () => {
     investmentProgress,
     recommendedSavings,
     recommendedInvestment,
-  } = calculateFinanceSummary(transactions);
+  } = calculateFinanceSummary(transactions, rule);
 
   if (income === 0) {
     return (
@@ -43,7 +43,7 @@ export const FinancialHealthCard = () => {
         <div>
           <div className="flex justify-between text-sm mb-1">
             <span className="text-indigo-600">
-              📈 Inversión recomendada (50%)
+              📈 Inversión recomendada ({rule.investment})
             </span>
 
             <span className="font-medium">
@@ -55,8 +55,8 @@ export const FinancialHealthCard = () => {
 
           {investment < recommendedInvestment && (
             <div className="text-xs text-yellow-600 mt-1">
-              Has retirado {formatMoney(recommendedInvestment - investment)} de
-              tu inversión
+              Te faltan {formatMoney(recommendedInvestment - investment)} para
+              tu meta
             </div>
           )}
 
@@ -76,7 +76,9 @@ export const FinancialHealthCard = () => {
 
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-blue-600">💰 Ahorro recomendado (20%)</span>
+            <span className="text-blue-600">
+              💰 Ahorro recomendado ({rule.savings})
+            </span>
 
             <span className="font-medium">
               {formatMoney(savings)} / {formatMoney(recommendedSavings)}
@@ -87,8 +89,8 @@ export const FinancialHealthCard = () => {
 
           {savings < recommendedSavings && (
             <div className="text-xs text-yellow-600 mt-1">
-              Has retirado {formatMoney(recommendedSavings - savings)} de tu
-              ahorro
+              Te faltan {formatMoney(recommendedSavings - savings)} para ahorrar
+              lo ideal
             </div>
           )}
 
@@ -108,7 +110,9 @@ export const FinancialHealthCard = () => {
 
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-red-500">💸 Presupuesto de gastos (30%)</span>
+            <span className="text-red-500">
+              💸 Presupuesto de gastos ({rule.expenses})
+            </span>
 
             <span className="font-medium">
               {formatMoney(expenses)} / {formatMoney(allowedExpenses)}
@@ -137,11 +141,9 @@ export const FinancialHealthCard = () => {
         </div>
       </div>
 
-      <div className="text-xs text-slate-400 pt-3 border-t text-center">
-        Basado en la regla financiera{" "}
-        <span className="font-medium">
-          50% inversión • 20% ahorro • 30% gastos
-        </span>
+      <div className="text-center text-xs opacity-60 pt-2 border-t border-gray-500/30">
+        Regla: {rule.investment}% inv • {rule.savings}% ahorro • {rule.expenses}
+        % gastos
       </div>
     </div>
   );
