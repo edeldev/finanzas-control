@@ -1,6 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
-import { formatMoney } from "../../utils/formatters";
+import { formatSmartMoney } from "../../utils/formatSmartMoney";
 import { ProgressBar } from "../ui/ProgressBar";
 import { FinanceChart } from "./FinanceChart";
 
@@ -43,11 +43,12 @@ export const FinancialHealthCard = () => {
         <div>
           <div className="flex justify-between text-sm mb-1">
             <span className="text-indigo-600">
-              📈 Inversión recomendada ({rule.investment})
+              📈 Inversión recomendada ({rule.investment}%)
             </span>
 
             <span className="font-medium">
-              {formatMoney(investment)} / {formatMoney(recommendedInvestment)}
+              {formatSmartMoney(investment)} /{" "}
+              {formatSmartMoney(recommendedInvestment)}
             </span>
           </div>
 
@@ -55,8 +56,8 @@ export const FinancialHealthCard = () => {
 
           {investment < recommendedInvestment && (
             <div className="text-xs text-yellow-600 mt-1">
-              Te faltan {formatMoney(recommendedInvestment - investment)} para
-              tu meta
+              Te faltan {formatSmartMoney(recommendedInvestment - investment)}{" "}
+              para tu meta
             </div>
           )}
 
@@ -68,8 +69,8 @@ export const FinancialHealthCard = () => {
 
           {investment > recommendedInvestment && (
             <div className="text-xs text-green-700 mt-1 font-medium">
-              🚀 Tienes {formatMoney(investment - recommendedInvestment)} extra
-              para invertir
+              🚀 Tienes {formatSmartMoney(investment - recommendedInvestment)}{" "}
+              extra para invertir
             </div>
           )}
         </div>
@@ -77,11 +78,12 @@ export const FinancialHealthCard = () => {
         <div>
           <div className="flex justify-between text-sm mb-1">
             <span className="text-blue-600">
-              💰 Ahorro recomendado ({rule.savings})
+              💰 Ahorro recomendado ({rule.savings}%)
             </span>
 
             <span className="font-medium">
-              {formatMoney(savings)} / {formatMoney(recommendedSavings)}
+              {formatSmartMoney(savings)} /{" "}
+              {formatSmartMoney(recommendedSavings)}
             </span>
           </div>
 
@@ -89,8 +91,8 @@ export const FinancialHealthCard = () => {
 
           {savings < recommendedSavings && (
             <div className="text-xs text-yellow-600 mt-1">
-              Te faltan {formatMoney(recommendedSavings - savings)} para ahorrar
-              lo ideal
+              Te faltan {formatSmartMoney(recommendedSavings - savings)} para
+              ahorrar lo ideal
             </div>
           )}
 
@@ -102,8 +104,8 @@ export const FinancialHealthCard = () => {
 
           {savings > recommendedSavings && (
             <div className="text-xs text-green-700 mt-1 font-medium">
-              🏆 Ahorraste {formatMoney(savings - recommendedSavings)} extra
-              este periodo
+              🏆 Ahorraste {formatSmartMoney(savings - recommendedSavings)}{" "}
+              extra este periodo
             </div>
           )}
         </div>
@@ -111,11 +113,11 @@ export const FinancialHealthCard = () => {
         <div>
           <div className="flex justify-between text-sm mb-1">
             <span className="text-red-500">
-              💸 Presupuesto de gastos ({rule.expenses})
+              💸 Presupuesto de gastos ({rule.expenses}%)
             </span>
 
             <span className="font-medium">
-              {formatMoney(expenses)} / {formatMoney(allowedExpenses)}
+              {formatSmartMoney(expenses)} / {formatSmartMoney(allowedExpenses)}
             </span>
           </div>
 
@@ -124,11 +126,12 @@ export const FinancialHealthCard = () => {
           <div className="text-xs mt-1">
             {remainingExpenses >= 0 ? (
               <span className="text-slate-400">
-                Disponible: {formatMoney(remainingExpenses)}
+                Disponible: {formatSmartMoney(remainingExpenses)}
               </span>
             ) : (
               <span className="text-red-500 font-semibold">
-                ⚠️ Te excediste por {formatMoney(Math.abs(remainingExpenses))}
+                ⚠️ Te excediste por{" "}
+                {formatSmartMoney(Math.abs(remainingExpenses))}
               </span>
             )}
           </div>

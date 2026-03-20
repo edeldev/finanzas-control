@@ -3,8 +3,8 @@ import { useFinance } from "../../context/FinanceContext";
 import { expenseCategories, incomeCategories } from "../../data/categories";
 import { Card } from "../ui/Card";
 import { ExportTransactions } from "./ExportTransaction";
-import { formatMoney } from "../../utils/formatters";
 import toast from "react-hot-toast";
+import { formatSmartMoney } from "../../utils/formatSmartMoney";
 
 export const TransactionList = () => {
   const {
@@ -219,7 +219,7 @@ export const TransactionList = () => {
                     }`}
                   >
                     {parent.type === "income" ? "+" : "-"}
-                    {formatMoney(parent.amount)}
+                    {formatSmartMoney(parent.amount)}
                   </span>
                 )}
               </div>
@@ -268,7 +268,7 @@ export const TransactionList = () => {
                 }`}
               >
                 {parent.type === "income" ? "+" : "-"}
-                {formatMoney(parent.amount)}
+                {formatSmartMoney(parent.amount)}
               </span>
             )}
 
@@ -325,7 +325,7 @@ export const TransactionList = () => {
             </span>
 
             <span className="text-red-500 font-medium">
-              -{formatMoney(child.amount)}
+              -{formatSmartMoney(child.amount)}
             </span>
           </div>
         ))}
