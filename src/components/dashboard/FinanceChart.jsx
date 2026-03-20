@@ -1,6 +1,6 @@
 import { useFinance } from "../../context/FinanceContext";
 import { calculateFinanceSummary } from "../../utils/calculations";
-import { formatMoney } from "../../utils/formatters";
+import { formatSmartMoney } from "../../utils/formatSmartMoney";
 
 export const FinanceChart = () => {
   const { transactions, rule } = useFinance();
@@ -40,7 +40,7 @@ export const FinanceChart = () => {
               isExceeded ? "text-red-500" : "text-slate-800"
             }`}
           >
-            {formatMoney(remainingExpenses)}
+            {formatSmartMoney(remainingExpenses)}
           </span>
         </div>
       </div>
